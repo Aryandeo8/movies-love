@@ -1,8 +1,9 @@
-import { asyncHandler } from "../utils/asynchandler";
-import { User } from "../models/user.model";
-import { ApiError } from "../utils/apiError";
+import { asyncHandler } from "../utils/asynchandler.js";
+import { User } from "../models/user.model.js";
+import { ApiError } from "../utils/apiError.js";
 import jwt from "jsonwebtoken";
-import { ApiResponse } from "../utils/ApiResponse";
+import { ApiResponse } from "../utils/ApiResponse.js";
+
 
 const generateAccessAndRefereshTokens = async(userId) =>{
     try {
