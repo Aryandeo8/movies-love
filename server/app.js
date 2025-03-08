@@ -1,12 +1,18 @@
-import express from "express";  
-import env from "dotenv";
+import express from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
 
-const app=express();
-env.config();
-const port =process.env.PORT || 3000;
+const app = express();
+app.use(cors({
+    origin: process.env.CORS_ORIGIN,
+    credentials:true
+}))
+app.use(express.json({limit:"16kb"}));
+app.use(express.urlencoded({extended:true, limit:"16kb"}));
+app.use(cookieParser());
 
+import userRouter from "./routes/user.route.js";
 
+app.use("/api/v1/users", userRouter);
 
-app.listen(port,()=>{
-    console.log(`Server is running on port ${port}`);
-});
+export {app};
