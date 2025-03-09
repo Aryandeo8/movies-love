@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Link, useLocation } from 'react-router-dom';
 import React from 'react';
+import { GoogleLogin } from '@react-oauth/google';
 
 export const Logincard = () => {
   const [email, setEmail] = useState('');
@@ -20,7 +21,11 @@ export const Logincard = () => {
       setIsLogin(false);
     }
   }, [location]);
-
+  const handleGoogleSuccess = (credentialResponse) => {
+    console.log(credentialResponse);
+    // Handle server-side logic if needed
+    navigate('/display');
+  };
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Form submission with:', { email, password });
@@ -55,7 +60,9 @@ export const Logincard = () => {
         })
     }
   };
-
+  const handleError = (error) => {
+    console.error(error);
+  };
   return (
     <div className="flex justify-center items-center min-h-screen">
       <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 max-w-md w-full mx-4 border-2 border-white/20 shadow-lg">
@@ -106,12 +113,21 @@ export const Logincard = () => {
 
           {/* Social Login */}
           <div className="flex items-center justify-center">
-            <button className="flex items-center space-x-2 bg-white/10 backdrop-blur-sm px-6 py-2 rounded-full border border-white/20 hover:border-white/30 transition-all">
+              
+              {/*<button onClick={googleSignin} className="flex items-center space-x-2 bg-white/10 backdrop-blur-sm px-6 py-2 rounded-full border border-white/20 hover:border-white/30 transition-all">
+              
               <div className="w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center">
                 <span className="text-white text-xs font-medium">G</span>
               </div>
-              <span className="text-white text-sm">Continue with Google</span>
-            </button>
+              <span className="text-white text-sm"><a href="/auth/google">Continue with Google</a> </span>
+            </button>*/}
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={handleError}
+            />
+              
+              
+            
             {isLogin ? (
               <p className="ml-4 mb-4 text-sm text-gray-300 mt-4 text-center">
                 No account? <Link to="/register" className="text-white hover:text-black">Register</Link>

@@ -3,7 +3,8 @@ import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/apiError.js";
 import jwt from "jsonwebtoken";
 import { ApiResponse } from "../utils/ApiResponse.js";
-
+import passport from "passport";
+import GoogleStrategy from "passport-google-oauth20";
 
 const generateAccessAndRefereshTokens = async(userId) =>{
     try {
@@ -20,7 +21,7 @@ const generateAccessAndRefereshTokens = async(userId) =>{
     } catch (error) {
         throw new ApiError(500, "Something went wrong while generating referesh and access token")
     }
-}
+};
 const registerUser = asyncHandler( async (req, res) => {
 
     const {email,password } = req.body
@@ -60,7 +61,7 @@ const registerUser = asyncHandler( async (req, res) => {
         new ApiResponse(200, createdUser, "User registered Successfully")
     )
 
-} )
+} );
 const loginUser = asyncHandler(async (req, res) =>{
     const {email,password} = req.body
     console.log(email);
@@ -110,7 +111,7 @@ const loginUser = asyncHandler(async (req, res) =>{
         )
     )
 
-})
+});
 const refreshAccessToken = asyncHandler(async (req, res) => {
     const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken
 
@@ -157,7 +158,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
         throw new ApiError(401, error?.message || "Invalid refresh token")
     }
 
-})
+});
 const getCurrentUser = asyncHandler(async(req, res) => {
     return res
     .status(200)
@@ -166,10 +167,20 @@ const getCurrentUser = asyncHandler(async(req, res) => {
         req.user,
         "User fetched successfully"
     ))
-})
+});
+
+const googleCallback = asyncHandler(async(req, res) => {
+    const user = req.user;
+    const {accessToken, refreshToken} = await generateAccessAndRefereshTokens(user._id);
+    res.cookie("accessToken", accessToken, { httpOnly: true, secure: true });
+    res.cookie("refreshToken", refreshToken, { httpOnly: true, secure: true });
+    res.redirect('/display');
+  });
+  
 export {
     registerUser,
     loginUser,
     refreshAccessToken,
-    getCurrentUser
+    getCurrentUser,
+    googleCallback
 }
